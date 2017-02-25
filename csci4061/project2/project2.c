@@ -6,79 +6,7 @@
 #include<string.h>
 #include<stdlib.h>
 #include<dirent.h>
-
-typedef struct node {
-	char *filename;
-	struct node *next;
-} node_t;
-
-void print_list(node_t * head) {
-	node_t * current = head;
-
-	while (current != NULL) {
-			printf("%s\n", current->filename);
-			current = current->next;
-	}
-}
-
-void push_node(node_t *head, char *filename) {
-	node_t *current = head;
-	if(current->filename == NULL) {
-		current->filename = filename;
-		current->next = NULL;
-	}
-	else {
-		while (current->next != NULL) {
-				current = current->next;
-		}
-		current->next = malloc(sizeof(node_t));
-		current->next->filename = filename;
-		current->next->next = NULL;
-	}
-
-}
-
-char* remove_node(node_t *head, char *filename) {
-	node_t *current = head;
-	node_t *previous = NULL;
-	if(head == NULL) {
-		return NULL;
-	}
-	while (strcmp(current->filename ,filename)){
-		if(current->next == NULL) {
-			printf("Could not remove %s: filename not found", filename);
-		}
-		else {
-			previous = current;
-			current = current->next;
-		}
-	}
-	previous->next = current->next;
-	return current->filename;
-}
-
-int isEmpty(node_t *head) {
-	if(head == NULL) {
-		return 1;
-	}
-	else {
-		return 0;
-	}
-}
-
-node_t search_nodes(node_t *head, char *filename) {
-	node_t *current = head;
-	if(head == NULL) {
-		return NULL;
-	}
-	while(current->next != null) {
-		if(strcmp(current->filename, filename)) {
-			return current;
-		}
-		current = current->next;
-	}
-	return NULL;
-}
+#include<linkedlist.h>
 
 int convert_to_JPG(char *filename, char *inputDir, char *outputDir) {
 	char fileIn[80];
@@ -168,45 +96,43 @@ int main (int argc, char *argv[]) {
 	int pd[convertCount + 1];
 	char *pipedFilename;
 
-	// //Forked Process
-	// int childcount = convertCount;
-	// int filesCompleted = 0;
-	// pid_t childpid;
-	// while(!(filesCompleted)) {
-	// 	if(childCount <= 0) {
-	// 		wait();
-	// 		childCount++;
-	// 	}
-	// 	else {
-	// 		childCount--;
-	// 		childpid = fork();
-	// 		if (childpid == 0) {
-	// 			break;
-	// 		}
-	// 		if(((long)getpid() % 2 == 0) && !((long)getpid() % 3 == 0)){
-	// 			//png
-	// 			if (!(stat(outputDir, &s))){
-	//
-	// 				//Thumbnail command
-	// 				//convert "$file" -resize 200x200 "$thumbnail_name.jpg"
-	// 				//Used for finding size
-	// 				//identify $file
-	//
-	// 			}
-	// 		}
-	// 		else if(((long)getpid() % 3 == 0) && !((long)getpid() % 2 == 0)){
-	// 			//bmp
-	// 		}
-	// 		else if(((long)getpid() % 2 == 0) && ((long)getpid() % 3 == 0)){
-	// 			//gif
-	// 		}
-	// 		else {
-	// 			//nonimage
-	// 			filesCompleted = 1;
-	// 		}
-	//		printf("%s converted to jpg by process with id %d",filename, childPid);
-	// 	}
-	// }
+	//Forked Process
+	int childCount = convertCount;
+	pid_t childpid;
+	while(!isEmpty(head)) {
+		if(childCount <= 0) {
+			wait();
+			childCount++;
+		}
+		else {
+			childCount--;
+			childpid = fork();
+			if (childpid == 0) {
+				break;
+			}
+			if(((long)getpid() % 2 == 0) && !((long)getpid() % 3 == 0)){
+				//png
+				if (!(stat(outputDir, &s))){
+
+					//Thumbnail command
+					//convert "$file" -resize 200x200 "$thumbnail_name.jpg"
+					//Used for finding size
+					//identify $file
+
+				}
+			}
+			else if(((long)getpid() % 3 == 0) && !((long)getpid() % 2 == 0)){
+				//bmp
+			}
+			else if(((long)getpid() % 2 == 0) && ((long)getpid() % 3 == 0)){
+				//gif
+			}
+			else {
+				//nonimage
+			}
+			//printf("%s converted to jpg by process with id %d",filename, childPid);
+		}
+	}
 	printf("\n");
 	//fclose(logFp);
 	//fclose(nonimageFp);
